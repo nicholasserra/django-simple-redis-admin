@@ -1,0 +1,106 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_static admin_list %}
+{% load url from future %}
+{% load admin_urls %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" type="text/css" href="{% static "admin/css/changelists.css" %}" />
+    <link rel="stylesheet" type="text/css" href="{% static "admin/css/forms.css" %}" />
+    {% url 'admin:jsi18n' as jsi18nurl %}
+    <script type="text/javascript" src="{{ jsi18nurl|default:'../../jsi18n/' }}"></script>
+  {{ media.css }}
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+
+
+<script type="text/javascript" src="{{ STATIC_URL }}admin/js/core.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}admin/js/admin/RelatedObjectLookups.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}admin/js/jquery.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}admin/js/jquery.init.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}admin/js/actions.js"></script>
+
+
+<script type="text/javascript">
+(function($) {
+    $(document).ready(function($) {
+        $("tr input.action-select").actions();
+    });
+})(django.jQuery);
+</script>
+{% endblock %}
+
+{% block bodyclass %}change-list{% endblock %}
+
+{% if not is_popup %}
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+<a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+</div>
+{% endblock %}
+{% endif %}
+
+{% block coltype %}flex{% endblock %}
+
+
+{% block content %}
+<div id="content-main">
+    <div class="module" id="changelist">
+        <div id="toolbar">
+            <form id="changelist-search" action="" method="get">
+                <div><!-- DIV needed for valid HTML -->
+                    <label for="searchbar"><img src="{{ STATIC_URL }}admin/img/icon_searchbox.png" alt="Search" /></label>
+                    <input type="text" size="40" name="q" value="" id="searchbar" />
+                    <input type="submit" value="Search" />
+                </div>
+            </form>
+        </div>
+        <script type="text/javascript">document.getElementById("searchbar").focus();</script>
+        <form id="changelist-form" action="" method="post">{% csrf_token %}
+            <div class="actions">
+                <label>Action: 
+                    <select name="action">
+                        <option value="" selected="selected">---------</option>
+                        <option value="delete_selected">Delete selected keys</option>
+                    </select>
+                </label>
+                <input type="hidden" class="select-across" value="0" name="select_across" />
+                <button type="submit" class="button" title="Run the selected action" name="index" value="0">Go</button>
+                <script type="text/javascript">var _actions_icnt="{{ keys|length }}";</script>
+                <span class="action-counter">0 of {{ keys|length }} selected</span>
+            </div>
+            <div class="results">
+                <table id="result_list">
+                    <thead>
+                        <tr>
+                            <th scope="col"  class="action-checkbox-column">
+                               <div class="text"><span><input type="checkbox" id="action-toggle" style="display: inline;" /></span></div>
+                               <div class="clear"></div>
+                            </th>
+                            <th scope="col"  class="sortable">
+                                <div class="text"><a href="?o=5.1">Key</a></div>
+                                <div class="clear"></div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for key in keys %}
+                        <tr class="{% cycle 'row1' 'row2' %}">
+                            <td class="action-checkbox">
+                                <input type="checkbox" class="action-select" value="{{ key }}" name="_selected_action" />
+                            </td>
+                            <th>
+                                <a href="{% url 'admin:index' %}redis/manage/{{ key }}/">{{ key }}</a>
+                            </th>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <p class="paginator"></p>
+        </form>
+    </div>
+</div>
+{% endblock %}
