@@ -6,6 +6,8 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, Http404
+from django.contrib.auth.decorators import user_passes_test
+from django.utils.decorators import method_decorator
 
 
 class RedisAdmin(admin.ModelAdmin):
@@ -19,6 +21,7 @@ class RedisAdmin(admin.ModelAdmin):
         )
         return my_urls + urls
 
+    @method_decorator(user_passes_test(lambda u: u.is_superuser))
     def index(self, request):
 
         if request.method == 'POST' and request.POST.getlist('_selected_action') and \
@@ -31,8 +34,9 @@ class RedisAdmin(admin.ModelAdmin):
         else:
             keys_result = cache._client.keys('*')
 
-        return render_to_response('redis_admin/index.html', {'keys': keys_result}, context_instance=RequestContext(request))
+        return render_to_response('redis_admin/index.html', {'keys': keys_result, 'count': len(keys_result)}, context_instance=RequestContext(request))
 
+    @method_decorator(user_passes_test(lambda u: u.is_superuser))
     def key(self, request, key):
 
         key_type = cache._client.type(key)
@@ -50,6 +54,7 @@ class RedisAdmin(admin.ModelAdmin):
 
         return render_to_response('redis_admin/key.html', context, context_instance=RequestContext(request))
 
+    @method_decorator(user_passes_test(lambda u: u.is_superuser))
     def delete(self, request, key):
         cache._client.delete(key)
         return HttpResponseRedirect('%sredis/manage/' % reverse('admin:index'))
