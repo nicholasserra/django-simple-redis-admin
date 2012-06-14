@@ -99,7 +99,24 @@
                     </tbody>
                 </table>
             </div>
-            <p class="paginator">{{ count }} keys</p>
+            
+            <p class="paginator">
+                {% for page in page_range %}
+                
+                    {% if keys.number == forloop.counter %}
+                    <span class="this-page">{{ keys.number }}</span> 
+                    {% elif forloop.last %}
+                    <a class="end" href="?p={{ page }}">{{ page }}</a>
+                    {% else %}
+                    <a href="?p={{ page }}">{{ page }}</a>
+                    {% endif %}
+                {% endfor %}
+
+
+            {{ count }} keys
+            &nbsp;&nbsp;<a class="showall" href="?all=">Show all</a>
+
+            </p>
         </form>
     </div>
 </div>

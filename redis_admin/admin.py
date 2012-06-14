@@ -8,6 +8,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, Http404
 from django.contrib.auth.decorators import user_passes_test
 from django.utils.decorators import method_decorator
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 class RedisAdmin(admin.ModelAdmin):
@@ -34,7 +35,17 @@ class RedisAdmin(admin.ModelAdmin):
         else:
             keys_result = cache._client.keys('*')
 
-        return render_to_response('redis_admin/index.html', {'keys': keys_result, 'count': len(keys_result)}, context_instance=RequestContext(request))
+        paginator = Paginator(keys_result, 100)
+
+        page = request.GET.get('p')
+        try:
+            keys = paginator.page(page)
+        except PageNotAnInteger:
+            keys = paginator.page(1)
+        except EmptyPage:
+            keys = paginator.page(paginator.num_pages)
+
+        return render_to_response('redis_admin/index.html', {'keys': keys, 'count': paginator.count, 'page_range': paginator.page_range}, context_instance=RequestContext(request))
 
     @method_decorator(user_passes_test(lambda u: u.is_superuser))
     def key(self, request, key):
