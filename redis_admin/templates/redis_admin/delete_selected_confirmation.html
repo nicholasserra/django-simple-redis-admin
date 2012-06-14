@@ -1,0 +1,35 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_static admin_modify %}
+{% load url from future %}
+{% load admin_urls %}
+
+
+{% if not is_popup %}
+{% block breadcrumbs %}
+    <div class="breadcrumbs">
+        <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
+        &rsaquo; <a href="{% url 'admin:index' %}redis/manage/">Manage</a> &rsaquo;
+        {% trans 'Delete multiple objects' %}
+</div>
+{% endblock %}
+{% endif %}
+
+
+{% block content %}
+    <p>{% blocktrans %}Are you sure you want to delete the selected keys?{% endblocktrans %}</p>
+        <ul>
+            {% for key in keys %}
+            <li>Key: <a href="{% url 'admin:index' %}redis/manage/{{ key }}">{{ key }}</a></li>
+            {% endfor %}
+        </ul>
+    <form action="" method="post">{% csrf_token %}
+    <div>
+    {% for key in keys %}
+    <input type="hidden" name="_selected_action" value="{{ key }}" />
+    {% endfor %}
+    <input type="hidden" name="action" value="delete_selected" />
+    <input type="hidden" name="post" value="yes" />
+    <input type="submit" value="{% trans "Yes, I'm sure" %}" />
+    </div>
+    </form>
+{% endblock %}

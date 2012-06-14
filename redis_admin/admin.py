@@ -9,6 +9,7 @@ from django.http import HttpResponseRedirect, Http404
 from django.contrib.auth.decorators import user_passes_test
 from django.utils.decorators import method_decorator
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.contrib import messages
 
 
 class RedisAdmin(admin.ModelAdmin):
@@ -26,9 +27,24 @@ class RedisAdmin(admin.ModelAdmin):
     def index(self, request):
 
         if request.method == 'POST' and request.POST.getlist('_selected_action') and \
-            request.POST.get('action') == 'delete_selected':
+            request.POST.get('action') == 'delete_selected' and \
+            request.POST.get('post') == 'yes':
 
-            cache.delete_many(request.POST.getlist('_selected_action'))
+            if cache._client.delete(*request.POST.getlist('_selected_action')):
+                messages.add_message(request, messages.SUCCESS, 
+                                    'Successfully deleted %d keys.' %
+                                    len(request.POST.getlist('_selected_action')))
+            else:
+                messages.add_message(request, messages.ERROR, 
+                                    'Could not delete %d keys.' %
+                                    len(request.POST.getlist('_selected_action')))
+
+        elif request.method == 'POST' and request.POST.getlist('_selected_action') and \
+            request.POST.get('action') == 'delete_selected':
+ 
+            return render_to_response('redis_admin/delete_selected_confirmation.html', 
+                                     {'keys': request.POST.getlist('_selected_action')},
+                                     context_instance=RequestContext(request))
 
         if request.GET.get('q'):
             keys_result = cache._client.keys('*%s*' % request.GET.get('q'))
@@ -51,8 +67,7 @@ class RedisAdmin(admin.ModelAdmin):
     def key(self, request, key):
 
         key_type = cache._client.type(key)
-        print key_type
-        
+
         if key_type == 'none':
             raise Http404
 
@@ -67,9 +82,14 @@ class RedisAdmin(admin.ModelAdmin):
 
     @method_decorator(user_passes_test(lambda u: u.is_superuser))
     def delete(self, request, key):
-        cache._client.delete(key)
-        return HttpResponseRedirect('%sredis/manage/' % reverse('admin:index'))
-
+        if request.method == "POST" and request.POST.get('post') == 'yes':
+            if cache._client.delete(key):
+                messages.add_message(request, messages.SUCCESS, 'The key "%s" was deleted successfully.' % key)
+            else:
+                messages.add_message(request, messages.ERROR, 'The key "%s" was not deleted successfully.' % key)
+            return HttpResponseRedirect('%sredis/manage/' % reverse('admin:index'))
+        return render_to_response('redis_admin/delete_confirmation.html', 
+                                 {'key': key}, context_instance=RequestContext(request))
 
 class Meta:
     app_label = 'redis'
