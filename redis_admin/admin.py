@@ -54,6 +54,7 @@ class RedisAdmin(admin.ModelAdmin):
         paginator = Paginator(keys_result, 100)
 
         page = request.GET.get('p')
+
         try:
             keys = paginator.page(page)
         except PageNotAnInteger:
@@ -61,7 +62,9 @@ class RedisAdmin(admin.ModelAdmin):
         except EmptyPage:
             keys = paginator.page(paginator.num_pages)
 
-        return render_to_response('redis_admin/index.html', {'keys': keys, 'count': paginator.count, 'page_range': paginator.page_range}, context_instance=RequestContext(request))
+        return render_to_response('redis_admin/index.html', {'keys': keys, 
+                                  'count': paginator.count, 'page_range': paginator.page_range},
+                                   context_instance=RequestContext(request))
 
     @method_decorator(user_passes_test(lambda u: u.is_superuser))
     def key(self, request, key):
@@ -78,7 +81,8 @@ class RedisAdmin(admin.ModelAdmin):
         elif key_type == 'set':
             context['value'] = str(cache._client.smembers(key))
 
-        return render_to_response('redis_admin/key.html', context, context_instance=RequestContext(request))
+        return render_to_response('redis_admin/key.html', context, 
+                                   context_instance=RequestContext(request))
 
     @method_decorator(user_passes_test(lambda u: u.is_superuser))
     def delete(self, request, key):

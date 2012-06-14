@@ -1,4 +1,4 @@
-django-better-redis-admin
+django-simple-redis-admin
 =========================
 
-A better redis admin for django
+A simple redis admin for Django.
