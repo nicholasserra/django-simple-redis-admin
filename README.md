@@ -6,8 +6,7 @@ django-simple-redis-admin
 Requirements
 ------------
 * Django >= 1.4
-* redis.py
-* a Django redis cache backend. I recommend [django-redis-cache](https://github.com/sebleier/django-redis-cache)
+* A Django redis cache backend. I recommend [django-redis-cache](https://github.com/sebleier/django-redis-cache)
 
 Installation
 ------------
