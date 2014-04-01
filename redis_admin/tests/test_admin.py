@@ -15,7 +15,7 @@ class RedisAdminSanityTests(TestCase):
         self.assertEqual(200, response.status_code)
 
 
-class RedisAdminUrlsTests(TestCase):
+class RedisAdminViewsTests(TestCase):
     urls = 'redis_admin.tests.test_urls'
 
     def setUp(self):
@@ -42,4 +42,3 @@ class RedisAdminUrlsTests(TestCase):
 
     def tearDown(self):
         cache._client.delete('test-redis-admin')
-
