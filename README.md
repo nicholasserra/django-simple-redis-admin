@@ -12,7 +12,10 @@ Requirements
 Installation
 ------------
 `django-simple-redis-admin` can be installed via pip.
-    pip install django-simple-redis-admin
+
+```
+pip install django-simple-redis-admin
+```
 
 Then just add `redis_admin` to your `INSTALLED_APPS`.
 
