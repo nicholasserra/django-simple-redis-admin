@@ -30,4 +30,3 @@ To Do
 -----
 * Editing keys
 * Better representation for Redis sets
-* Travis tests for multiple Django versions
