@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='django-simple-redis-admin',
-    version='1.0.2',
+    version='1.1.0',
     description='A django admin application to manage redis cache keys.',
     long_description=open('README.md').read(),
     author='Nicholas Serra',

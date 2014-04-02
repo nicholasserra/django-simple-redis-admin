@@ -1,0 +1,7 @@
+Changelog
+=========
+
+1.1.0 (04.02.2014)
+==================
+ * Django 1.6 compatibility
+ * Added tests
