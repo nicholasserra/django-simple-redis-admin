@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/nicholasserra/django-simple-redis-admin.svg?branch=travis)](https://travis-ci.org/nicholasserra/django-simple-redis-admin)
+
 django-simple-redis-admin
 =========
 
