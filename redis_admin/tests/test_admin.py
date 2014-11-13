@@ -25,19 +25,19 @@ class RedisAdminViewsTests(TestCase):
         cache._client.set('test-redis-admin', 'test')
 
     def test_index(self):
-        response = self.client.get('/admin/redis/manage/')
+        response = self.client.get('/admin/redis_admin/manage/')
         self.assertEqual(200, response.status_code)
 
     def test_key(self):
-        response = self.client.get('/admin/redis/manage/test-redis-admin/')
+        response = self.client.get('/admin/redis_admin/manage/test-redis-admin/')
         self.assertEqual(200, response.status_code)
 
     def test_delete_key_confirmation(self):
-        response = self.client.get('/admin/redis/manage/test-redis-admin/delete/')
+        response = self.client.get('/admin/redis_admin/manage/test-redis-admin/delete/')
         self.assertEqual(200, response.status_code)
 
     def test_delete_key_action(self):
-        response = self.client.post('/admin/redis/manage/test-redis-admin/delete/', {'post': 'yes'})
+        response = self.client.post('/admin/redis_admin/manage/test-redis-admin/delete/', {'post': 'yes'})
         self.assertEqual(302, response.status_code)
 
     def tearDown(self):

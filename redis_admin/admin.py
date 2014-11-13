@@ -91,12 +91,12 @@ class RedisAdmin(admin.ModelAdmin):
                 messages.add_message(request, messages.SUCCESS, 'The key "%s" was deleted successfully.' % key)
             else:
                 messages.add_message(request, messages.ERROR, 'The key "%s" was not deleted successfully.' % key)
-            return HttpResponseRedirect('%sredis/manage/' % reverse('admin:index'))
+            return HttpResponseRedirect('%sredis_admin/manage/' % reverse('admin:index'))
         return render_to_response('redis_admin/delete_confirmation.html', 
                                  {'key': key}, context_instance=RequestContext(request))
 
 class Meta:
-    app_label = 'redis'
+    app_label = 'redis_admin'
     verbose_name = 'Manage'
     verbose_name_plural = "Manage"
 
