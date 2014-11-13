@@ -8,7 +8,7 @@
 {% block breadcrumbs %}
     <div class="breadcrumbs">
         <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
-        &rsaquo; <a href="{% url 'admin:index' %}redis/manage/">Manage</a> &rsaquo;
+        &rsaquo; <a href="{% url 'admin:index' %}redis_admin/manage/">Manage</a> &rsaquo;
         {% trans 'Delete multiple objects' %}
 </div>
 {% endblock %}
@@ -19,7 +19,7 @@
     <p>{% blocktrans %}Are you sure you want to delete the selected keys?{% endblocktrans %}</p>
         <ul>
             {% for key in keys %}
-            <li>Key: <a href="{% url 'admin:index' %}redis/manage/{{ key }}">{{ key }}</a></li>
+            <li>Key: <a href="{% url 'admin:index' %}redis_admin/manage/{{ key }}">{{ key }}</a></li>
             {% endfor %}
         </ul>
     <form action="" method="post">{% csrf_token %}

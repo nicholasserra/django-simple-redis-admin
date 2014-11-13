@@ -7,7 +7,7 @@
 {% block breadcrumbs %}
 <div class="breadcrumbs">
     <a href="{% url 'admin:index' %}">{% trans 'Home' %}</a>
-    &rsaquo; <a href="{% url 'admin:index' %}redis/manage/">Manage</a> &rsaquo;
+    &rsaquo; <a href="{% url 'admin:index' %}redis_admin/manage/">Manage</a> &rsaquo;
     {% trans 'Delete' %}
 </div>
 {% endblock %}
@@ -15,7 +15,7 @@
 
 {% block content %}
     <p>Are you sure you want to delete the key "{{ key }}"?</p>
-    <ul><li>Key: <a href="{% url 'admin:index' %}redis/manage/{{ key }}">{{ key }}</a></li></ul>
+    <ul><li>Key: <a href="{% url 'admin:index' %}redis_admin/manage/{{ key }}">{{ key }}</a></li></ul>
     <form action="" method="post">{% csrf_token %}
     <div>
     <input type="hidden" name="post" value="yes" />
