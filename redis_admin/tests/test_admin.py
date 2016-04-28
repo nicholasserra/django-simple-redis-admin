@@ -22,7 +22,7 @@ class RedisAdminViewsTests(TestCase):
         self.user = User.objects.create_superuser('test', 'test@test.com', 'password')
         self.client.login(username=self.user.username, password='password')
 
-        cache._client.set('test-redis-admin', 'test')
+        cache.master_client.set('test-redis-admin', 'test')
 
     def test_index(self):
         response = self.client.get('/admin/redis_admin/manage/')
@@ -41,4 +41,4 @@ class RedisAdminViewsTests(TestCase):
         self.assertEqual(302, response.status_code)
 
     def tearDown(self):
-        cache._client.delete('test-redis-admin')
+        cache.master_client.delete('test-redis-admin')

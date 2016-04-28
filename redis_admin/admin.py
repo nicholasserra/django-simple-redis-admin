@@ -30,7 +30,7 @@ class RedisAdmin(admin.ModelAdmin):
             request.POST.get('action') == 'delete_selected' and \
             request.POST.get('post') == 'yes':
 
-            if cache._client.delete(*request.POST.getlist('_selected_action')):
+            if cache.master_client.delete(*request.POST.getlist('_selected_action')):
                 messages.add_message(request, messages.SUCCESS, 
                                     'Successfully deleted %d keys.' %
                                     len(request.POST.getlist('_selected_action')))
@@ -47,9 +47,9 @@ class RedisAdmin(admin.ModelAdmin):
                                      context_instance=RequestContext(request))
 
         if request.GET.get('q'):
-            keys_result = cache._client.keys('*%s*' % request.GET.get('q'))
+            keys_result = cache.master_client.keys('*%s*' % request.GET.get('q'))
         else:
-            keys_result = cache._client.keys('*')
+            keys_result = cache.master_client.keys('*')
 
         paginator = Paginator(keys_result, 100)
 
@@ -69,7 +69,7 @@ class RedisAdmin(admin.ModelAdmin):
     @method_decorator(user_passes_test(lambda u: u.is_superuser))
     def key(self, request, key):
 
-        key_type = cache._client.type(key)
+        key_type = cache.master_client.type(key)
 
         if key_type == 'none':
             raise Http404
@@ -77,9 +77,9 @@ class RedisAdmin(admin.ModelAdmin):
         context = {'key': key, 'type': key_type}
 
         if key_type == 'string':
-             context['value'] = cache._client.get(key)
+             context['value'] = cache.master_client.get(key)
         elif key_type == 'set':
-            context['value'] = str(cache._client.smembers(key))
+            context['value'] = str(cache.master_client.smembers(key))
 
         return render_to_response('redis_admin/key.html', context, 
                                    context_instance=RequestContext(request))
@@ -87,7 +87,7 @@ class RedisAdmin(admin.ModelAdmin):
     @method_decorator(user_passes_test(lambda u: u.is_superuser))
     def delete(self, request, key):
         if request.method == "POST" and request.POST.get('post') == 'yes':
-            if cache._client.delete(key):
+            if cache.master_client.delete(key):
                 messages.add_message(request, messages.SUCCESS, 'The key "%s" was deleted successfully.' % key)
             else:
                 messages.add_message(request, messages.ERROR, 'The key "%s" was not deleted successfully.' % key)
