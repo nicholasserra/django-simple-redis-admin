@@ -20,5 +20,5 @@ matrix:
       env: DJANGO_VERSION=1.10
 install:
   - pip install -q Django==$DJANGO_VERSION
-  - pip install django-redis-cache
+  - pip install django-redis-cache==1.6.5
 script: python runtests.py
