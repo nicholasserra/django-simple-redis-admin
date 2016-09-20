@@ -2,7 +2,6 @@ from django.contrib import admin
 from django.db import models
 from django.conf.urls import url
 from django.core.cache import cache
-from django.template import RequestContext
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, Http404
