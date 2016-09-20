@@ -3,7 +3,7 @@ from django.db import models
 from django.conf.urls import url
 from django.core.cache import cache
 from django.template import RequestContext
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, Http404
 from django.contrib.auth.decorators import user_passes_test
@@ -42,9 +42,8 @@ class RedisAdmin(admin.ModelAdmin):
         elif request.method == 'POST' and request.POST.getlist('_selected_action') and \
             request.POST.get('action') == 'delete_selected':
 
-            return render_to_response('redis_admin/delete_selected_confirmation.html',
-                                     {'keys': request.POST.getlist('_selected_action')},
-                                     context_instance=RequestContext(request))
+            return render(request, 'redis_admin/delete_selected_confirmation.html',
+                         {'keys': request.POST.getlist('_selected_action')})
 
         if request.GET.get('q'):
             keys_result = cache.master_client.keys('*%s*' % request.GET.get('q'))
@@ -62,9 +61,8 @@ class RedisAdmin(admin.ModelAdmin):
         except EmptyPage:
             keys = paginator.page(paginator.num_pages)
 
-        return render_to_response('redis_admin/index.html', {'keys': keys, 
-                                  'count': paginator.count, 'page_range': paginator.page_range},
-                                   context_instance=RequestContext(request))
+        return render(request, 'redis_admin/index.html', {'keys': keys, 
+                     'count': paginator.count, 'page_range': paginator.page_range})
 
     @method_decorator(user_passes_test(lambda u: u.is_superuser))
     def key(self, request, key):
@@ -81,8 +79,7 @@ class RedisAdmin(admin.ModelAdmin):
         elif key_type == 'set':
             context['value'] = str(cache.master_client.smembers(key))
 
-        return render_to_response('redis_admin/key.html', context,
-                                   context_instance=RequestContext(request))
+        return render(request, 'redis_admin/key.html', context)
 
     @method_decorator(user_passes_test(lambda u: u.is_superuser))
     def delete(self, request, key):
@@ -92,8 +89,7 @@ class RedisAdmin(admin.ModelAdmin):
             else:
                 messages.add_message(request, messages.ERROR, 'The key "%s" was not deleted successfully.' % key)
             return HttpResponseRedirect('%sredis_admin/manage/' % reverse('admin:index'))
-        return render_to_response('redis_admin/delete_confirmation.html',
-                                 {'key': key}, context_instance=RequestContext(request))
+        return render(request, 'redis_admin/delete_confirmation.html', {'key': key})
 
 class Meta:
     app_label = 'redis_admin'
