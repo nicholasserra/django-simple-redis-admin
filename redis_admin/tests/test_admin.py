@@ -1,26 +1,34 @@
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.cache import cache
 from django.test import TestCase
 
 
 class RedisAdminSanityTests(TestCase):
-    urls = 'redis_admin.tests.test_urls'
+    urls = 'redis_admin.tests.test_urls' # Deprecated in Django 1.10.
 
     def setUp(self):
         self.user = User.objects.create_superuser('test', 'test@test.com', 'password')
         self.client.login(username=self.user.username, password='password')
+        self.ROOT_URLCONF = getattr(settings, 'ROOT_URLCONF', None)
+        setattr(settings, 'ROOT_URLCONF', 'redis_admin.tests.test_urls')
 
     def test_admin_accessible(self):
         response = self.client.get('/admin/')
         self.assertEqual(200, response.status_code)
 
+    def tearDown(self):
+        setattr(settings, 'ROOT_URLCONF', self.ROOT_URLCONF)
+
 
 class RedisAdminViewsTests(TestCase):
-    urls = 'redis_admin.tests.test_urls'
+    urls = 'redis_admin.tests.test_urls' # Deprecated in Django 1.10.
 
     def setUp(self):
         self.user = User.objects.create_superuser('test', 'test@test.com', 'password')
         self.client.login(username=self.user.username, password='password')
+        self.ROOT_URLCONF = getattr(settings, 'ROOT_URLCONF', None)
+        setattr(settings, 'ROOT_URLCONF', 'redis_admin.tests.test_urls')
 
         cache.master_client.set('test-redis-admin', 'test')
 
@@ -42,3 +50,4 @@ class RedisAdminViewsTests(TestCase):
 
     def tearDown(self):
         cache.master_client.delete('test-redis-admin')
+        setattr(settings, 'ROOT_URLCONF', self.ROOT_URLCONF)
