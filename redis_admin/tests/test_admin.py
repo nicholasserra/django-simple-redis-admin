@@ -1,10 +1,10 @@
 from django.contrib.auth.models import User
 from django.core.cache import cache
-from django.test import TestCase
+from django.test import override_settings, TestCase
 
 
+@override_settings(ROOT_URLCONF='redis_admin.tests.test_urls')
 class RedisAdminSanityTests(TestCase):
-    urls = 'redis_admin.tests.test_urls'
 
     def setUp(self):
         self.user = User.objects.create_superuser('test', 'test@test.com', 'password')
@@ -15,8 +15,8 @@ class RedisAdminSanityTests(TestCase):
         self.assertEqual(200, response.status_code)
 
 
+@override_settings(ROOT_URLCONF='redis_admin.tests.test_urls')
 class RedisAdminViewsTests(TestCase):
-    urls = 'redis_admin.tests.test_urls'
 
     def setUp(self):
         self.user = User.objects.create_superuser('test', 'test@test.com', 'password')
